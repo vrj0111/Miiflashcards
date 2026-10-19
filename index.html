@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-aurora">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>RecallPro 4.1 — Aesthetic Study Suite + Universal Star</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="RecallPro" />
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    button { touch-action: manipulation; cursor: pointer; user-select: none; }
+
+    /* ==================== 4 AESTHETIC THEMES ==================== */
+    html.theme-aurora {
+      --bg-main: radial-gradient(circle at 15% 10%, #1e1b4b 0%, #090d16 55%, #0f172a 100%);
+      --bg-panel: rgba(15, 23, 42, 0.78);
+      --bg-sub: rgba(2, 6, 23, 0.65);
+      --bg-muted: rgba(30, 41, 59, 0.85);
+      --border-col: rgba(99, 102, 241, 0.22);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent: #6366f1;
+      --card-front: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      --card-back: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+    }
+    html.theme-matcha {
+      --bg-main: linear-gradient(135deg, #f4efe6 0%, #e9e2d0 100%);
+      --bg-panel: rgba(253, 251, 247, 0.92);
+      --bg-sub: #f3ede0;
+      --bg-muted: #e5dec9;
+      --border-col: rgba(74, 107, 83, 0.25);
+      --text-main: #2c2520;
+      --text-sub: #6e6259;
+      --accent: #4a6b53;
+      --card-front: linear-gradient(145deg, #fffdf9 0%, #f5efe2 100%);
+      --card-back: linear-gradient(145deg, #edf3ee 0%, #e4ede6 100%);
+    }
+    html.theme-rose {
+      --bg-main: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 100%);
+      --bg-panel: rgba(255, 255, 255, 0.88);
+      --bg-sub: #fce7f3;
+      --bg-muted: #f5d0fe;
+      --border-col: rgba(219, 39, 119, 0.2);
+      --text-main: #3b0764;
+      --text-sub: #7e22ce;
+      --accent: #db2777;
+      --card-front: linear-gradient(145deg, #ffffff 0%, #fdf2f8 100%);
+      --card-back: linear-gradient(145deg, #faf5ff 0%, #fce7f3 100%);
+    }
+    html.theme-daylight {
+      --bg-main: linear-gradient(135deg, #f8fafc 0%, #eef2f6 100%);
+      --bg-panel: rgba(255, 255, 255, 0.95);
+      --bg-sub: #f1f5f9;
+      --bg-muted: #e2e8f0;
+      --border-col: #cbd5e1;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --accent: #4f46e5;
+      --card-front: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      --card-back: linear-gradient(145deg, #eef2ff 0%, #ffffff 100%);
+    }
+
+    body { background: var(--bg-main); color: var(--text-main); min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+    .panel-glass { background: var(--bg-panel); border: 1px solid var(--border-col); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .sub-glass { background: var(--bg-sub); border: 1px solid var(--border-col); }
+    .btn-soft { background: var(--bg-muted); color: var(--text-main); border: 1px solid var(--border-col); }
+    .text-main { color: var(--text-main); }
+    .text-sub { color: var(--text-sub); }
+    .btn-accent { background: var(--accent); color: #ffffff !important; }
+
+    .deck-stack-wrap { position: relative; padding-bottom: 14px; }
+    .deck-stack-wrap::before, .deck-stack-wrap::after {
+      content: ''; position: absolute; left: 18px; right: 18px; height: 100%;
+      border-radius: 1.5rem; background: var(--bg-panel); border: 1px solid var(--border-col);
+      pointer-events: none; transition: transform 0.3s ease;
+    }
+    .deck-stack-wrap::before { bottom: 6px; transform: scale(0.97); opacity: 0.65; z-index: 0; }
+    .deck-stack-wrap::after  { bottom: 0px; transform: scale(0.94); opacity: 0.35; z-index: 0; }
+
+    .perspective-1000 { perspective: 1300px; position: relative; z-index: 2; }
+    .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); transform-style: preserve-3d; }
+    .card-inner.is-flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 1.5rem; border: 1.5px solid var(--border-col);
+      box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.35);
+    }
+    .card-front-bg { background: var(--card-front); }
+    .card-back-bg  { background: var(--card-back); transform: rotateY(180deg); }
+    .match-tile.matched { opacity: 0; transform: scale(0.85); pointer-events: none; transition: all 0.22s; }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-30 panel-glass border-b px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden px-3 py-2 rounded-xl btn-soft text-xs font-bold flex items-center gap-1.5 shadow-sm">
+        <span>📁</span> <span>Folders</span>
+      </button>
+      <div class="w-9 h-9 rounded-2xl btn-accent flex items-center justify-center font-extrabold text-sm shadow-md">R</div>
+      <div class="hidden sm:block">
+        <span class="font-extrabold text-base tracking-tight text-main">RecallPro</span>
+        <span id="appReadyBadge" class="ml-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">✓ v4.1 Active</span>
+      </div>
+    </div>
+
+    <!-- YPT Session Pill -->
+    <button type="button" onclick="openModal('yptModal')" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 text-xs font-extrabold">
+      <span>🔥 YPT:</span> <span id="yptSessionSummary">0 Cards · 0 MCQs</span>
+    </button>
+
+    <!-- Search Input -->
+    <div class="flex-1 max-w-xs mx-1">
+      <input id="cardSearchInput" type="text" placeholder="🔍 Search words, meanings..." class="w-full sub-glass rounded-xl px-3.5 py-2 text-xs sm:text-sm text-main outline-none" />
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-1.5">
+      <button type="button" onclick="cycleTheme()" id="themeToggleBtn" class="px-2.5 py-2 rounded-xl btn-soft text-xs font-bold shadow-sm" title="Switch Aesthetic Theme">🌌 Aurora</button>
+      <button type="button" onclick="openModal('aiModal')" class="px-2.5 py-2 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 text-xs font-bold">✨ AI Key</button>
+      <button type="button" onclick="openAiGenModal(activeFolderId)" class="px-2.5 py-2 rounded-xl bg-gradient-to-r from-fuchsia-600 to-violet-600 text-white text-xs font-extrabold shadow-md">✨ AI Make</button>
+      <button type="button" onclick="openModal('backupModal')" class="px-2.5 py-2 rounded-xl btn-soft text-xs font-bold">💾</button>
+      <button type="button" onclick="openCardModal(null, activeFolderId)" class="px-3.5 py-2 rounded-xl btn-accent text-xs font-extrabold shadow-md">+ Card</button>
+    </div>
+  </header>
+
+  <!-- ==================== MOBILE DRAWER ==================== -->
+  <div id="mobileSidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-40 bg-black/70 hidden lg:hidden"></div>
+  <div id="mobileSidebarDrawer" class="fixed inset-y-0 left-0 z-50 w-80 max-w-[86vw] panel-glass border-r p-4 overflow-y-auto transform -translate-x-full transition-transform duration-300 lg:hidden">
+    <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-500/20">
+      <span class="font-extrabold text-sm text-main">📁 Folders & Subfolders</span>
+      <button type="button" onclick="closeMobileSidebar()" class="px-2.5 py-1 rounded-lg btn-soft text-xs font-bold">✕</button>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <button type="button" onclick="openFolderModal(null)" class="py-2 rounded-xl btn-accent text-xs font-extrabold shadow">+ Main Folder</button>
+      <button type="button" onclick="openFolderModal(activeFolderId)" class="py-2 rounded-xl btn-soft text-xs font-bold">+ Subfolder</button>
+    </div>
+    <div id="mobileFolderTree" class="space-y-1.5"></div>
+  </div>
+
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <div class="max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-5">
+      <div class="panel-glass rounded-3xl p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs font-extrabold uppercase tracking-wider text-sub">Study Folders</h2>
+          <span class="text-[11px] text-sub font-semibold">Tap + to add card</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <button type="button" onclick="openFolderModal(null)" class="py-2 rounded-xl btn-accent text-xs font-extrabold shadow">+ Main Folder</button>
+          <button type="button" onclick="openFolderModal(activeFolderId)" class="py-2 rounded-xl btn-soft text-xs font-bold">+ Subfolder</button>
+        </div>
+        <div id="desktopFolderTree" class="space-y-1.5 max-h-[25rem] overflow-y-auto pr-1"></div>
+      </div>
+
+      <div class="panel-glass rounded-3xl p-4 space-y-3 shadow-lg">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-extrabold uppercase tracking-wider text-sub">Folder Mastery</h2>
+          <span id="masteryPercentBadge" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500">0%</span>
+        </div>
+        <div class="w-full h-2.5 rounded-full sub-glass overflow-hidden flex">
+          <div id="barMastered" class="bg-emerald-500 transition-all duration-300" style="width:0%"></div>
+          <div id="barLearning" class="bg-amber-400 transition-all duration-300" style="width:0%"></div>
+          <div id="barNew" class="bg-rose-500 transition-all duration-300" style="width:0%"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="p-2.5 rounded-2xl sub-glass"><span class="text-emerald-500 font-extrabold block text-sm" id="countMastered">0</span><span class="text-[10px] text-sub font-semibold">Mastered</span></div>
+          <div class="p-2.5 rounded-2xl sub-glass"><span class="text-amber-500 font-extrabold block text-sm" id="countLearning">0</span><span class="text-[10px] text-sub font-semibold">Learning</span></div>
+          <div class="p-2.5 rounded-2xl sub-glass"><span class="text-rose-500 font-extrabold block text-sm" id="countNew">0</span><span class="text-[10px] text-sub font-semibold">Review</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT STUDY AREA -->
+    <main class="lg:col-span-8 xl:col-span-9 space-y-5">
+
+      <!-- Folder Header & Study Modes -->
+      <div class="panel-glass rounded-3xl p-4 sm:p-5 space-y-4 shadow-lg">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div id="folderBreadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-indigo-400"></div>
+            <div class="flex items-center gap-2.5 mt-1 flex-wrap">
+              <h1 id="activeFolderTitle" class="text-xl sm:text-2xl font-extrabold text-main">Folder</h1>
+              <span id="activeFolderCount" class="text-xs px-2.5 py-0.5 rounded-full btn-soft font-bold">0 cards</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" onclick="openCardModal(null, activeFolderId)" class="px-3 py-1.5 rounded-xl btn-accent text-xs font-extrabold shadow">+ Add Card Here</button>
+            <button type="button" onclick="openFolderModal(activeFolderId)" class="px-2.5 py-1.5 rounded-xl btn-soft text-xs font-bold">+ Subfolder</button>
+            <button type="button" onclick="openRenameFolderModal()" class="px-2.5 py-1.5 rounded-xl btn-soft text-xs font-semibold">✎</button>
+            <button type="button" onclick="deleteActiveFolder()" class="px-2.5 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 border border-rose-500/30 text-xs font-bold">🗑</button>
+          </div>
+        </div>
+
+        <div id="subfolderPillsContainer" class="hidden pt-2 border-t border-slate-500/20">
+          <div class="flex items-center gap-2 flex-wrap" id="subfolderPillsList"></div>
+        </div>
+
+        <!-- Scope & Utility Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-500/20 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer text-sub font-semibold">
+            <input type="checkbox" id="includeSubfoldersToggle" checked onchange="toggleIncludeSubfolders()" class="rounded w-4 h-4 accent-indigo-600" />
+            <span>Include subfolders (<strong id="subfoldersScopeHint">ON</strong>)</span>
+          </label>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" onclick="toggleReverseCards()" id="btnReverseToggle" class="px-2.5 py-1 rounded-lg btn-soft font-bold">🔄 Term → Def</button>
+            <button type="button" onclick="toggleStarredFilter()" id="btnFilterStarred" class="px-2.5 py-1 rounded-lg btn-soft font-semibold">⭐ Starred Only</button>
+            <button type="button" onclick="shuffleActiveCards()" class="px-2.5 py-1 rounded-lg btn-soft font-semibold">⇄ Shuffle</button>
+            <button type="button" onclick="openBulkModal(activeFolderId)" class="px-2.5 py-1 rounded-lg btn-soft text-indigo-400 font-extrabold">📥 Bulk Paste</button>
+          </div>
+        </div>
+
+        <!-- 6 Study Mode Tabs -->
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+          <button type="button" onclick="setStudyMode('flashcards')" id="tab-flashcards" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">🗂️ Cards</button>
+          <button type="button" onclick="setStudyMode('type')" id="tab-type" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">⌨️ Type Test</button>
+          <button type="button" onclick="setStudyMode('exam')" id="tab-exam" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">📝 Mock MCQ</button>
+          <button type="button" onclick="setStudyMode('mistakes')" id="tab-mistakes" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">📕 Mistakes <span id="mistakeTabBadge" class="ml-0.5 px-1.5 rounded-full bg-rose-500 text-white text-[10px] hidden">0</span></button>
+          <button type="button" onclick="setStudyMode('spaced')" id="tab-spaced" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">🧠 Spaced</button>
+          <button type="button" onclick="setStudyMode('match')" id="tab-match" class="py-2.5 px-2 rounded-2xl text-xs font-extrabold border transition">⚡ Match</button>
+        </div>
+      </div>
+
+      <!-- ==================== EMPTY FOLDER LAUNCHPAD ==================== -->
+      <section id="emptyFolderLaunchpad" class="hidden panel-glass rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-lg">
+        <div class="w-14 h-14 rounded-2xl btn-accent mx-auto flex items-center justify-center text-2xl shadow-lg">📂</div>
+        <div class="space-y-1">
+          <h2 id="emptyFolderNameTitle" class="text-lg sm:text-xl font-extrabold text-main">This Folder is Ready for Cards!</h2>
+          <p class="text-xs text-sub max-w-md mx-auto">Add flashcards directly into this folder using any of the 3 quick methods below:</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
+          <button type="button" onclick="openCardModal(null, activeFolderId)" class="p-4 rounded-2xl btn-accent font-extrabold text-xs sm:text-sm shadow-lg flex flex-col items-center gap-1.5">
+            <span class="text-xl">➕</span>
+            <span>Add Card Manually</span>
+          </button>
+          <button type="button" onclick="openBulkModal(activeFolderId)" class="p-4 rounded-2xl sub-glass hover:opacity-90 font-extrabold text-xs sm:text-sm text-main flex flex-col items-center gap-1.5">
+            <span class="text-xl">📥</span>
+            <span>Bulk Paste List</span>
+          </button>
+          <button type="button" onclick="openAiGenModal(activeFolderId)" class="p-4 rounded-2xl bg-gradient-to-br from-fuchsia-600 to-violet-600 text-white font-extrabold text-xs sm:text-sm shadow-lg flex flex-col items-center gap-1.5">
+            <span class="text-xl">✨</span>
+            <span>AI Auto-Generate</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 1: STACKED 3D FLASHCARDS (WITH BACK STAR BUTTON) ==================== -->
+      <section id="view-flashcards" class="space-y-4">
+        <div class="deck-stack-wrap">
+          <div id="flashcardTouchArea" class="perspective-1000 w-full h-80 sm:h-96 cursor-pointer select-none" onclick="flipCard()">
+            <div id="flashcardInner" class="card-inner">
+              <!-- Front Face -->
+              <div class="card-face card-front-bg p-5 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div class="space-y-2.5">
+                  <div class="w-full h-1.5 rounded-full bg-slate-500/20 overflow-hidden">
+                    <div id="cardTopProgressFill" class="h-full btn-accent transition-all duration-300" style="width: 10%"></div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span id="cardFolderBadge" class="px-2.5 py-0.5 rounded-full btn-soft font-bold">Folder</span>
+                    <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+                      <button type="button" id="btnToggleHint" onclick="toggleHintVisibility()" class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 font-extrabold text-xs">💡 Hint</button>
+                      <button type="button" onclick="quickEditCardHint()" class="px-2 py-1 rounded-xl btn-soft text-xs font-bold">+Hint</button>
+                      <button type="button" onclick="speakCurrentSide('front')" class="p-1.5 rounded-xl btn-soft">🔊</button>
+                      <button type="button" id="starBtnFront" onclick="toggleStarCurrentCard()" class="p-1.5 rounded-xl btn-soft text-base leading-none" title="Star Important Word">⭐</button>
+                      <button type="button" onclick="editCurrentCard()" class="p-1.5 rounded-xl btn-soft text-xs">✎</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="my-auto text-center px-2 flex flex-col items-center justify-center gap-3">
+                  <img id="cardFrontImage" class="hidden max-h-36 sm:max-h-44 rounded-2xl border border-slate-500/30 object-contain shadow" alt="" />
+                  <p id="cardFrontText" class="text-xl sm:text-3xl font-extrabold text-main leading-snug break-words"></p>
+                  <div id="cardHintBox" onclick="event.stopPropagation()" class="hidden mt-1 px-4 py-2 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-xs sm:text-sm text-amber-500 font-bold max-w-md">
+                    <span id="cardHintText"></span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-sub font-semibold">
+                  <span id="cardStatusBadge" class="px-2.5 py-0.5 rounded-full sub-glass">NEW</span>
+                  <span>Tap to flip · Swipe left/right</span>
+                </div>
+              </div>
+
+              <!-- Back Face (Now includes the Star button too!) -->
+              <div class="card-face card-back-bg p-5 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="uppercase font-extrabold text-emerald-500 tracking-wider">Answer / Meaning</span>
+                  <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+                    <button type="button" id="starBtnBack" onclick="toggleStarCurrentCard()" class="px-2.5 py-1 rounded-xl btn-soft font-extrabold text-xs" title="Star Important Word">⭐ Star</button>
+                    <button type="button" onclick="explainCurrentCardWithAi()" class="px-3 py-1 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 font-extrabold text-xs">✨ AI Explain</button>
+                    <button type="button" onclick="speakCurrentSide('back')" class="p-1.5 rounded-xl btn-soft">🔊</button>
+                  </div>
+                </div>
+
+                <div class="my-auto text-center px-2 flex flex-col items-center justify-center gap-3">
+                  <img id="cardBackImage" class="hidden max-h-36 sm:max-h-44 rounded-2xl border border-indigo-500/30 object-contain shadow" alt="" />
+                  <p id="cardBackText" class="text-lg sm:text-2xl font-bold text-main leading-relaxed break-words"></p>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-sub font-semibold">
+                  <span>Rate confidence below</span>
+                  <span>Tap to flip back</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="flashcardAiBox" class="hidden p-4 rounded-2xl panel-glass border-violet-500/40 text-xs sm:text-sm"></div>
+
+        <div class="panel-glass rounded-3xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="prevCard()" class="px-3.5 py-2 rounded-xl btn-soft font-extrabold text-xs sm:text-sm">←</button>
+            <span id="cardProgressCounter" class="text-xs sm:text-sm font-extrabold text-main min-w-[4rem] text-center">1 / 1</span>
+            <button type="button" onclick="nextCard()" class="px-3.5 py-2 rounded-xl btn-soft font-extrabold text-xs sm:text-sm">→</button>
+            <button type="button" id="btnAutoPlay" onclick="toggleAutoPlayAudio()" class="ml-1 px-3 py-2 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 text-xs font-extrabold">
+              🎧 Auto-Play
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="rateCurrentCard('new')" class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-rose-500/15 text-rose-500 border border-rose-500/30 text-xs font-extrabold">🔄 Again</button>
+            <button type="button" onclick="rateCurrentCard('learning')" class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 text-xs font-extrabold">⚡ Good</button>
+            <button type="button" onclick="rateCurrentCard('mastered')" class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 text-xs font-extrabold">✅ Mastered</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 2: TYPE / SPELL THE ANSWER MODE ==================== -->
+      <section id="view-type" class="hidden panel-glass rounded-3xl p-5 sm:p-6 space-y-4 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-500/20 pb-3">
+          <div>
+            <span class="text-xs font-extrabold uppercase text-indigo-400">Active Recall Spelling Test</span>
+            <h3 class="text-lg font-extrabold text-main">⌨️ Type the Exact Term / Word</h3>
+          </div>
+          <button type="button" onclick="loadNextTypeCard()" class="px-3 py-1.5 rounded-xl btn-soft text-xs font-bold">Skip →</button>
+        </div>
+
+        <div class="p-5 rounded-2xl sub-glass space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sub uppercase">Meaning / Clue:</span>
+            <button type="button" id="typeStarBtn" onclick="toggleStarTypeCard()" class="px-2.5 py-1 rounded-lg btn-soft text-xs font-bold">⭐ Star Word</button>
+          </div>
+          <p id="typePromptText" class="text-base sm:text-xl font-extrabold text-main leading-relaxed"></p>
+          <div class="flex items-center gap-2 pt-1">
+            <span class="text-xs font-bold text-amber-500">Letter Mask:</span>
+            <code id="typeMaskHint" class="px-2.5 py-1 rounded-lg btn-soft font-mono text-xs sm:text-sm font-bold tracking-widest"></code>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <input id="typeAnswerInput" type="text" placeholder="Type exact word here..." onkeydown="if(event.key==='Enter') checkTypedAnswer()" class="flex-1 sub-glass rounded-xl px-4 py-3 text-sm font-bold text-main outline-none" />
+          <button type="button" onclick="checkTypedAnswer()" class="px-5 py-3 rounded-xl btn-accent text-xs sm:text-sm font-extrabold shadow">Check</button>
+          <button type="button" onclick="revealTypedAnswer()" class="px-3.5 py-3 rounded-xl btn-soft text-xs font-bold">Reveal</button>
+        </div>
+
+        <div id="typeFeedbackBox" class="hidden p-4 rounded-2xl text-xs sm:text-sm font-bold"></div>
+      </section>
+
+      <!-- ==================== VIEW 3: EXAM MOCK MCQ ==================== -->
+      <section id="view-exam" class="hidden panel-glass rounded-3xl p-5 space-y-5 shadow-lg">
+        <div id="examSetupPanel" class="space-y-4">
+          <div>
+            <span class="text-xs font-extrabold uppercase text-indigo-400">Subject-Locked MCQ Generator + AI Tutor</span>
+            <h2 class="text-xl font-extrabold text-main mt-1">Configure Your Mock Test</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-2xl sub-glass space-y-1.5">
+              <label class="text-xs font-bold uppercase text-sub">Question Style</label>
+              <select id="examPatternSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-bold">
+                <option value="mixed">Mixed Exam Mode (Both Styles)</option>
+                <option value="term_to_def">Word/Term → Choose Meaning</option>
+                <option value="def_to_term">OWS Style (Meaning → Choose Word)</option>
+              </select>
+            </div>
+            <div class="p-3.5 rounded-2xl sub-glass space-y-1.5">
+              <label class="text-xs font-bold uppercase text-sub">Questions Source</label>
+              <select id="examCountSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-bold">
+                <option value="10">10 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="999" selected>All Cards in Current Folder</option>
+                <option value="starred_only">⭐ Only Starred / Important Words</option>
+                <option value="mistakes_only">📕 Only Cards From Mistake Book</option>
+              </select>
+            </div>
+            <div class="p-3.5 rounded-2xl sub-glass space-y-1.5">
+              <label class="text-xs font-bold uppercase text-sub">Negative Marking</label>
+              <select id="examNegativeSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-bold">
+                <option value="0.25">+1.0 Correct / -0.25 Wrong</option>
+                <option value="0.33">+1.0 Correct / -0.33 Wrong</option>
+                <option value="0">No Negative Marking</option>
+              </select>
+            </div>
+            <div class="p-3.5 rounded-2xl sub-glass space-y-1.5">
+              <label class="text-xs font-bold uppercase text-sub">AI Explanation Timing</label>
+              <select id="examFeedbackModeSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-bold">
+                <option value="instant" selected>Instant Explanation on Wrong Answer</option>
+                <option value="end">Real Exam Hall (Show at End)</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" onclick="startMockExam(false)" class="w-full py-3.5 rounded-2xl btn-accent font-extrabold text-sm shadow-lg">🚀 Start Mock Test Now</button>
+        </div>
+
+        <div id="examActivePanel" class="hidden space-y-4">
+          <div class="flex items-center justify-between p-3 rounded-2xl sub-glass">
+            <span id="examQCounter" class="text-sm font-extrabold text-indigo-400">Q. 1</span>
+            <div class="flex items-center gap-2">
+              <button type="button" id="examStarBtn" onclick="toggleStarExamQuestion()" class="px-2.5 py-1 rounded-lg btn-soft text-xs font-bold">⭐ Star</button>
+              <button type="button" onclick="toggleExamQuestionHint()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-500 text-xs font-bold">💡 Hint</button>
+              <span class="text-xs text-sub">⏱ <strong id="examTimerDisplay" class="font-mono text-main">00:00</strong></span>
+              <button type="button" onclick="submitMockExam()" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Submit Test</button>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl sub-glass space-y-3">
+            <span id="examQuestionTypeTag" class="text-[11px] font-extrabold uppercase text-amber-500 block">Question</span>
+            <img id="examQuestionImage" class="hidden max-h-40 rounded-xl object-contain" alt="" />
+            <p id="examQuestionStem" class="text-base sm:text-lg font-extrabold text-main whitespace-pre-line"></p>
+            <div id="examQuestionHintBox" class="hidden p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-500 font-bold"></div>
+          </div>
+          <div id="examOptionsGrid" class="grid grid-cols-1 gap-2.5"></div>
+          <div id="examInstantTutorBox" class="hidden p-4 rounded-2xl border space-y-2 text-xs sm:text-sm"></div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-500/20">
+            <button type="button" onclick="goExamQuestion(examCurrentIndex - 1)" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">← Prev</button>
+            <button type="button" onclick="goExamQuestion(examCurrentIndex + 1)" class="px-4 py-2 rounded-xl btn-accent text-xs font-extrabold">Next Question →</button>
+          </div>
+          <div id="examPaletteGrid" class="flex flex-wrap gap-1.5 pt-2"></div>
+        </div>
+
+        <div id="examResultPanel" class="hidden space-y-5">
+          <div class="p-4 rounded-2xl sub-glass flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 id="examFinalScoreText" class="text-2xl font-extrabold text-main">Score: 0</h3>
+              <p id="examFinalSummarySub" class="text-xs text-sub mt-1 font-semibold"></p>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" onclick="setStudyMode('mistakes')" class="px-3.5 py-2 rounded-xl bg-rose-500/20 text-rose-500 text-xs font-extrabold">📕 Mistake Book</button>
+              <button type="button" onclick="showExamSetup()" class="px-3.5 py-2 rounded-xl btn-soft text-xs font-bold">New Test</button>
+            </div>
+          </div>
+          <div id="examSolutionsList" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: MISTAKE NOTEBOOK ==================== -->
+      <section id="view-mistakes" class="hidden panel-glass rounded-3xl p-5 space-y-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-500/20 pb-3">
+          <div>
+            <h2 class="text-lg font-extrabold text-main">📕 Automatic Mistake Notebook</h2>
+            <p class="text-xs text-sub">Questions you missed in Mock Tests or marked "Again".</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="startMockExam(true)" class="px-3.5 py-2 rounded-xl bg-rose-600 text-white text-xs font-extrabold shadow">🎯 Test My Mistakes</button>
+            <button type="button" onclick="clearAllMistakes()" class="px-3 py-2 rounded-xl btn-soft text-xs font-bold">Clear All</button>
+          </div>
+        </div>
+        <div id="mistakeNotebookList" class="space-y-3"></div>
+      </section>
+
+      <!-- ==================== VIEW 5: MATCH GAME ==================== -->
+      <section id="view-match" class="hidden panel-glass rounded-3xl p-5 space-y-4 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-500/20 pb-3">
+          <span class="text-sm font-extrabold text-main">⚡ Speed Match Challenge</span>
+          <div class="flex items-center gap-3">
+            <span id="matchTimer" class="text-base font-mono font-extrabold text-indigo-400">0.0s</span>
+            <button type="button" onclick="startMatchGame()" class="px-3.5 py-1.5 rounded-xl btn-accent text-xs font-extrabold">Restart</button>
+          </div>
+        </div>
+        <div id="matchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 min-h-[16rem]"></div>
+      </section>
+
+      <!-- ==================== CARDS LIST + UNIVERSAL STAR BUTTON ==================== -->
+      <section class="panel-glass rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="selectAllCardsCheck" onchange="toggleSelectAllCards(this.checked)" class="rounded w-4 h-4 accent-indigo-600" />
+            <h2 class="text-xs font-extrabold uppercase tracking-wider text-sub">Cards in Scope (<span id="cardTableCount">0</span>)</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="openCardModal(null, activeFolderId)" class="px-3 py-1 rounded-xl btn-accent text-xs font-extrabold">+ Add Card Here</button>
+          </div>
+        </div>
+
+        <div id="bulkActionToolbar" class="hidden p-3 rounded-2xl sub-glass flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-extrabold text-indigo-400"><span id="selectedCardsCount">0</span> selected</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="bulkMoveTargetSelect" class="btn-soft rounded-xl px-2.5 py-1.5 text-xs font-bold"></select>
+            <button type="button" onclick="moveSelectedCardsToFolder()" class="px-3 py-1.5 rounded-xl btn-accent font-extrabold">📁 Move Here</button>
+            <button type="button" onclick="deleteSelectedCards()" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-extrabold">🗑 Delete</button>
+          </div>
+        </div>
+
+        <div id="deckCardsList" class="space-y-2"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+  <div id="cardModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="panel-glass rounded-3xl max-w-lg w-full p-5 space-y-3 my-8 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="cardModalTitle" class="text-base font-extrabold text-main">Add Flashcard</h3>
+        <button type="button" onclick="closeModal('cardModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <input type="hidden" id="editCardId" />
+      <div>
+        <label class="block text-xs font-bold text-sub mb-1">Target Folder / Subfolder</label>
+        <select id="inputCardFolderSelect" class="w-full btn-soft rounded-xl p-2.5 text-xs sm:text-sm font-extrabold"></select>
+      </div>
+      <textarea id="inputCardFront" rows="2" class="w-full sub-glass rounded-xl p-3 text-sm text-main font-semibold outline-none" placeholder="Front (Word / Question / Article)"></textarea>
+      <textarea id="inputCardBack" rows="3" class="w-full sub-glass rounded-xl p-3 text-sm text-main font-semibold outline-none" placeholder="Back (Meaning / Answer / Provision)"></textarea>
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-bold text-amber-500">💡 Memory Hint (Hidden until 💡 pressed)</label>
+          <button type="button" onclick="generateHintForModalWithAi()" class="text-[11px] font-extrabold text-violet-400 underline">✨ AI Hint</button>
+        </div>
+        <input id="inputCardHint" type="text" class="w-full sub-glass rounded-xl p-2.5 text-sm text-main outline-none" placeholder="Optional mnemonic or shortcut..." />
+      </div>
+      <div class="p-3 rounded-2xl sub-glass space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-indigo-400">📷 Image (Optional)</span>
+          <select id="inputCardImageSide" class="btn-soft rounded-lg px-2 py-1 text-xs font-bold">
+            <option value="both">Both Sides</option>
+            <option value="front">Front Only</option>
+            <option value="back">Back Only</option>
+          </select>
+        </div>
+        <input type="file" id="inputCardImageFile" accept="image/*" onchange="handleImageUpload(event)" class="block w-full text-xs text-sub" />
+        <div id="imagePreviewWrapper" class="hidden flex items-center justify-between pt-1">
+          <img id="imagePreviewThumb" class="h-14 rounded-lg object-contain" alt="" />
+          <button type="button" onclick="clearAttachedImage()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-500 text-xs font-bold">Remove</button>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="closeModal('cardModal')" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">Cancel</button>
+        <button type="button" onclick="saveCard()" class="px-5 py-2 rounded-xl btn-accent text-xs font-extrabold shadow">Save Card</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="folderModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-md w-full p-5 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="folderModalTitle" class="text-base font-extrabold text-main">Folder</h3>
+        <button type="button" onclick="closeModal('folderModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <input type="hidden" id="folderParentIdInput" />
+      <input type="hidden" id="folderEditModeInput" />
+      <div id="folderParentNotice" class="text-xs text-indigo-400 font-bold p-2.5 rounded-xl bg-indigo-500/10"></div>
+      <div class="flex gap-2">
+        <select id="inputFolderIcon" class="btn-soft rounded-xl px-2.5 py-2.5 text-base">
+          <option value="📁">📁</option>
+          <option value="🇬🇧">🇬🇧</option>
+          <option value="🏛️">🏛️</option>
+          <option value="⚖️">⚖️</option>
+          <option value="📜">📜</option>
+          <option value="🧠">🧠</option>
+          <option value="🎯">🎯</option>
+          <option value="📖">📖</option>
+        </select>
+        <input id="inputFolderName" type="text" class="flex-1 sub-glass rounded-xl p-2.5 text-sm font-bold text-main outline-none" placeholder="e.g., Day 3 Vocab, Idioms" />
+      </div>
+      <div class="flex justify-end gap-2 pt-1">
+        <button type="button" onclick="closeModal('folderModal')" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">Cancel</button>
+        <button type="button" onclick="saveFolderModal()" class="px-5 py-2 rounded-xl btn-accent text-xs font-extrabold shadow">Save Folder</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="importModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-lg w-full p-5 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-main">📥 Bulk Paste Cards into Folder</h3>
+        <button type="button" onclick="closeModal('importModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-sub mb-1">Save Pasted Cards Into:</label>
+        <select id="bulkTargetFolderSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-extrabold"></select>
+      </div>
+      <textarea id="bulkImportText" rows="5" class="w-full sub-glass rounded-xl p-3 text-xs font-mono text-main outline-none" placeholder="Word | Meaning | Hint"></textarea>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeModal('importModal')" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">Cancel</button>
+        <button type="button" onclick="processBulkImport()" class="px-5 py-2 rounded-xl btn-accent text-xs font-extrabold shadow">Import Cards</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="aiGenModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-md w-full p-5 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-main">✨ AI Topic-to-Flashcards</h3>
+        <button type="button" onclick="closeModal('aiGenModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-sub mb-1">Save Generated Cards Into:</label>
+        <select id="aiGenFolderSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-extrabold"></select>
+      </div>
+      <input id="aiGenTopicInput" type="text" class="w-full sub-glass rounded-xl p-2.5 text-sm font-bold text-main outline-none" placeholder="e.g., Important Writs" />
+      <select id="aiGenCountSelect" class="w-full btn-soft rounded-xl p-2 text-xs sm:text-sm font-bold">
+        <option value="5">5 Cards with Hints</option>
+        <option value="10">10 Cards with Hints</option>
+      </select>
+      <div id="aiGenStatus" class="hidden p-2.5 rounded-xl text-xs font-bold"></div>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeModal('aiGenModal')" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">Cancel</button>
+        <button type="button" onclick="generateCardsWithAi()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-fuchsia-600 to-violet-600 text-white text-xs font-extrabold shadow">✨ Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="aiModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-main">✨ Gemini AI Key Setup</h3>
+        <button type="button" onclick="closeModal('aiModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <input id="inputGeminiApiKey" type="password" class="w-full sub-glass rounded-xl p-2.5 text-xs font-mono text-main outline-none" placeholder="AIzaSy..." />
+      <div id="aiKeyTestStatus" class="hidden p-2.5 rounded-xl text-xs font-bold"></div>
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" class="block text-xs text-indigo-400 underline font-bold">↗ Get free key from Google AI Studio</a>
+      <div class="flex justify-between items-center pt-2">
+        <button type="button" onclick="testGeminiKey()" class="px-3.5 py-2 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 text-xs font-extrabold">⚡ Test Key</button>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeModal('aiModal')" class="px-4 py-2 rounded-xl btn-soft text-xs font-bold">Cancel</button>
+          <button type="button" onclick="saveAiApiKey()" class="px-4 py-2 rounded-xl btn-accent text-xs font-extrabold">Save Key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="yptModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-main">🔥 YPT Study Session Output</h3>
+        <button type="button" onclick="closeModal('yptModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="p-3 rounded-2xl sub-glass"><span id="yptModalCards" class="text-lg font-extrabold text-indigo-400 block">0</span><span class="text-[10px] text-sub font-bold">Cards Flipped</span></div>
+        <div class="p-3 rounded-2xl sub-glass"><span id="yptModalMcqs" class="text-lg font-extrabold text-emerald-500 block">0</span><span class="text-[10px] text-sub font-bold">MCQs Solved</span></div>
+        <div class="p-3 rounded-2xl sub-glass"><span id="yptModalAccuracy" class="text-lg font-extrabold text-amber-500 block">--%</span><span class="text-[10px] text-sub font-bold">Accuracy</span></div>
+      </div>
+      <div class="flex justify-between">
+        <button type="button" onclick="resetYptSession()" class="px-3 py-2 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-extrabold">↻ Reset Counter</button>
+        <button type="button" onclick="closeModal('yptModal')" class="px-4 py-2 rounded-xl btn-accent text-xs font-extrabold">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="backupModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="panel-glass rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-main">💾 Backup & Restore</h3>
+        <button type="button" onclick="closeModal('backupModal')" class="text-sub font-bold">✕</button>
+      </div>
+      <button type="button" onclick="exportBackupJson()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold shadow">⬇ Download Backup (.json)</button>
+      <div class="p-3 rounded-2xl sub-glass space-y-2">
+        <span class="text-xs font-bold text-indigo-400 block">Restore Backup File:</span>
+        <input type="file" accept=".json" onchange="importBackupJson(event)" class="block w-full text-xs text-sub" />
+      </div>
+      <div class="flex justify-between items-center pt-2">
+        <button type="button" onclick="resetToDefaultData()" class="text-xs text-rose-500 font-extrabold">Reset Sample Data</button>
+        <button type="button" onclick="closeModal('backupModal')" class="px-4 py-1.5 rounded-xl btn-soft text-xs font-bold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_DATA = {
+      folders: [
+        { id: 'f-eng', name: 'English Language', icon: '🇬🇧', parentId: null },
+        { id: 'f-eng-vocab', name: 'Daily Vocabulary', icon: '📖', parentId: 'f-eng' },
+        { id: 'f-eng-day1', name: 'Day 1 - Vocab', icon: '🎯', parentId: 'f-eng-vocab' },
+        { id: 'f-eng-day2', name: 'Day 2 - Vocab', icon: '🎯', parentId: 'f-eng-vocab' },
+        { id: 'f-eng-ows', name: 'One Word Substitution (OWS)', icon: '🧠', parentId: 'f-eng' },
+        { id: 'f-eng-syn', name: 'Synonyms & Antonyms', icon: '🔤', parentId: 'f-eng' },
+        { id: 'f-gs', name: 'General Studies & Polity', icon: '🏛️', parentId: null },
+        { id: 'f-gs-polity', name: 'Constitutional Articles & Writs', icon: '⚖️', parentId: 'f-gs' }
+      ],
+      cards: [
+        { id: 'c1', folderId: 'f-eng-day1', front: 'Ephemeral', back: 'Lasting for a very short time; transitory (Synonyms: fleeting, short-lived)', hint: 'Fades away quickly like morning mist', status: 'learning', starred: true, image: null, imageSide: 'both', mistakeCount: 1, lastWrongText: 'Present, appearing, or found everywhere', aiExplanation: null },
+        { id: 'c2', folderId: 'f-eng-day1', front: 'Pragmatic', back: 'Dealing with things sensibly and realistically based on practical considerations.', hint: 'Practical approach over theory', status: 'mastered', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c3', folderId: 'f-eng-day2', front: 'Ubiquitous', back: 'Present, appearing, or found everywhere at the same time (Omnipresent).', hint: 'Like smartphones today — everywhere', status: 'new', starred: true, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c4', folderId: 'f-eng-day2', front: 'Meticulous', back: 'Showing great attention to detail; very careful and precise.', hint: 'Micro-level care for every detail', status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c5', folderId: 'f-eng-ows', front: 'Infallible', back: 'A person or thing that never fails or makes a mistake; incapable of error.', hint: 'In (Not) + Fallible (Falling/Failing)', status: 'learning', starred: true, image: null, imageSide: 'both', mistakeCount: 1, lastWrongText: 'Stoic', aiExplanation: null },
+        { id: 'c6', folderId: 'f-eng-ows', front: 'Altruist', back: 'A person who acts unselfishly for the welfare of others.', hint: 'Lover of mankind / others', status: 'mastered', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c7', folderId: 'f-eng-ows', front: 'Stoic', back: 'A person who can endure pain or hardship without showing feelings or complaining.', hint: 'Calm and indifferent to pain or pleasure', status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c8', folderId: 'f-eng-syn', front: 'Candid', back: 'Synonym: Frank, Honest, Forthright | Antonym: Devious, Guarded', hint: 'Candid camera = unposed and genuine', status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'c9', folderId: 'f-gs-polity', front: 'Article 21', back: 'Protection of Life and Personal Liberty: No person shall be deprived of life or personal liberty except according to procedure established by law.', hint: 'Heart of Fundamental Rights (Life & Liberty)', status: 'mastered', starred: true, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'p2', folderId: 'f-gs-polity', front: 'Article 14', back: 'Equality before the Law and Equal Protection of the Laws within the territory of India.', hint: 'First Article of Right to Equality (14-18)', status: 'learning', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'p3', folderId: 'f-gs-polity', front: 'Writ of Mandamus', back: 'Judicial writ issued by a higher court commanding a public official or authority to perform a mandatory public duty.', hint: 'Literally means "We Command"', status: 'new', starred: true, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'p4', folderId: 'f-gs-polity', front: '73rd Constitutional Amendment Act (1992)', back: 'Granted constitutional status to Panchayati Raj Institutions (Part IX) and added the 11th Schedule with 29 subjects.', hint: 'Rural Local Government (3-Tier Panchayati Raj)', status: 'learning', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'p5', folderId: 'f-gs-polity', front: 'Article 280 (Finance Commission)', back: 'Constitutional body constituted by the President every 5 years to recommend distribution of tax revenues between Union and States.', hint: 'Fiscal federalism balance every 5 years', status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null },
+        { id: 'p6', folderId: 'f-gs-polity', front: 'Article 51A (Fundamental Duties)', back: 'Part IVA specifying 11 Fundamental Duties of citizens, added by 42nd Amendment (1976) on Swaran Singh Committee recommendations.', hint: '42nd Amendment + Swaran Singh Committee', status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null }
+      ]
+    };
+
+    const STORAGE_KEY = 'recallpro_v2_data';
+    const THEME_KEY = 'recallpro_v41_theme';
+    const AI_KEY_STORAGE = 'recallpro_gemini_api_key';
+
+    let appData = DEFAULT_DATA;
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && Array.isArray(saved.folders) && Array.isArray(saved.cards)) appData = saved;
+    } catch (e) {}
+
+    appData.folders.forEach(f => { if (!f.icon) f.icon = f.parentId ? '📂' : '📁'; });
+    appData.cards.forEach(c => {
+      if (typeof c.mistakeCount !== 'number') c.mistakeCount = 0;
+      if (!c.lastWrongText) c.lastWrongText = null;
+      if (!c.aiExplanation) c.aiExplanation = null;
+    });
+
+    let activeFolderId = appData.folders[0]?.id || null;
+    let includeSubfolders = true;
+    let activeMode = 'flashcards';
+    let currentCardIndex = 0;
+    let isFlipped = false;
+    let isHintVisible = false;
+    let reverseCardDir = false;
+    let starredOnly = false;
+    let searchQuery = '';
+    let tempCardImageData = null;
+    let selectedCardIds = new Set();
+    let autoPlayTimer = null;
+
+    let yptSession = { cardsReviewed: 0, mcqsSolved: 0, mcqsCorrect: 0 };
+    let examQuestions = [], examCurrentIndex = 0, examTimerInterval = null, examSecondsElapsed = 0;
+    let examConfig = { negMark: 0.25, feedbackMode: 'instant' };
+    let matchSelectedTile = null, matchTimerInterval = null, matchStartTime = 0, matchRemainingPairs = 0;
+    let currentTypeCard = null;
+
+    function saveToStorage() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch (e) {} }
+    function escapeHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+    const THEMES = ['aurora', 'matcha', 'rose', 'daylight'];
+    const THEME_LABELS = { aurora: '🌌 Aurora', matcha: '☕ Matcha', rose: '🌸 Rose', daylight: '☀️ Daylight' };
+    let currentTheme = localStorage.getItem(THEME_KEY) || 'aurora';
+    if (!THEMES.includes(currentTheme)) currentTheme = 'aurora';
+
+    function applyTheme(t) {
+      currentTheme = t; localStorage.setItem(THEME_KEY, t);
+      document.documentElement.className = `theme-${t}`;
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = THEME_LABELS[t];
+    }
+    function cycleTheme() { applyTheme(THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length]); }
+
+    function updateYptUI() {
+      document.getElementById('yptSessionSummary').textContent = `${yptSession.cardsReviewed} Cards · ${yptSession.mcqsSolved} MCQs`;
+      document.getElementById('yptModalCards').textContent = yptSession.cardsReviewed;
+      document.getElementById('yptModalMcqs').textContent = yptSession.mcqsSolved;
+      document.getElementById('yptModalAccuracy').textContent = yptSession.mcqsSolved ? Math.round((yptSession.mcqsCorrect / yptSession.mcqsSolved) * 100) + '%' : '--%';
+    }
+    function resetYptSession() { yptSession = { cardsReviewed: 0, mcqsSolved: 0, mcqsCorrect: 0 }; updateYptUI(); }
+
+    async function callGeminiSmart(promptText, overrideKey = null) {
+      const apiKey = (overrideKey || localStorage.getItem(AI_KEY_STORAGE) || '').trim();
+      if (!apiKey) throw new Error('NO_KEY');
+      let models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      try {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+        if (r.ok) {
+          const d = await r.json();
+          const found = (d.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => m.name.replace('models/', '')).filter(n => n.includes('gemini') && !n.includes('image') && !n.includes('tts'));
+          models = [...new Set([...found.filter(n => n.includes('flash')), ...models, ...found])];
+        }
+      } catch (e) {}
+      let lastErr = 'Check API Key';
+      for (const m of models) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+          });
+          const data = await res.json();
+          if (res.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) return { text: data.candidates[0].content.parts[0].text, model: m };
+          if (data?.error?.message) lastErr = data.error.message;
+        } catch (err) { lastErr = err.message; }
+      }
+      throw new Error(lastErr);
+    }
+
+    function saveAiApiKey() { localStorage.setItem(AI_KEY_STORAGE, document.getElementById('inputGeminiApiKey').value.trim()); closeModal('aiModal'); }
+    async function testGeminiKey() {
+      const key = document.getElementById('inputGeminiApiKey').value.trim(), st = document.getElementById('aiKeyTestStatus');
+      st.classList.remove('hidden');
+      if (!key) { st.className = 'p-2.5 rounded-xl text-xs bg-rose-500/20 text-rose-400'; st.textContent = 'Paste key first.'; return; }
+      st.className = 'p-2.5 rounded-xl text-xs bg-violet-500/20 text-violet-400'; st.textContent = '⚡ Testing...';
+      try {
+        const res = await callGeminiSmart('Say OK', key);
+        localStorage.setItem(AI_KEY_STORAGE, key);
+        st.className = 'p-2.5 rounded-xl text-xs bg-emerald-500/20 text-emerald-500'; st.textContent = `✅ Connected (${res.model})!`;
+      } catch (e) { st.className = 'p-2.5 rounded-xl text-xs bg-rose-500/20 text-rose-400'; st.textContent = `❌ Error: ${e.message}`; }
+    }
+
+    function getSmartTrapExplanation(correctCard, wrongText) {
+      const dist = appData.cards.find(c => c.id !== correctCard.id && (c.front === wrongText || c.back === wrongText));
+      let h = `<div class="space-y-1"><div class="font-bold text-emerald-500">✅ Correct (${escapeHtml(correctCard.front)}): ${escapeHtml(correctCard.back)}</div>`;
+      if (correctCard.hint) h += `<div class="text-amber-500">💡 Hint: ${escapeHtml(correctCard.hint)}</div>`;
+      if (dist) h += `<div class="pt-1.5 mt-1.5 border-t border-slate-500/20 text-rose-500"><strong>⚠️ Trap Alert:</strong> Your pick belongs to <strong>"${escapeHtml(dist.front)}"</strong> (${escapeHtml(dist.back)}).</div>`;
+      return h + `</div>`;
+    }
+
+    async function requestGeminiExplanationById(cardId, domId) {
+      const card = appData.cards.find(c => c.id === cardId), box = document.getElementById(domId);
+      if (!card || !box) return;
+      box.classList.remove('hidden');
+      if (!localStorage.getItem(AI_KEY_STORAGE)) {
+        box.innerHTML = `<div class="flex items-center justify-between gap-2"><span>✨ Save your Gemini key in <strong>✨ AI Key</strong> at the top first!</span><button type="button" onclick="openModal('aiModal')" class="px-3 py-1 rounded-lg bg-violet-600 text-white font-bold">Setup Key</button></div>`;
+        return;
+      }
+      box.innerHTML = `<div class="text-violet-400 font-bold animate-pulse">✨ AI analyzing "${escapeHtml(card.front)}"...</div>`;
+      try {
+        const r = await callGeminiSmart(`Exam tutor breakdown for "${card.front}" = "${card.back}". ${card.lastWrongText ? `Student picked "${card.lastWrongText}".` : ''} Give 3 short bullets: 1. Core Meaning, 2. Trap difference, 3. Memory Trick.`);
+        card.aiExplanation = r.text; saveToStorage();
+        box.innerHTML = `<div class="font-bold text-violet-400 mb-1">✨ AI Tutor (${escapeHtml(r.model)}):</div><div class="whitespace-pre-line">${escapeHtml(r.text)}</div>`;
+      } catch (e) { box.innerHTML = `<div class="text-rose-500">AI Error: ${escapeHtml(e.message)}</div>`; }
+    }
+
+    function explainCurrentCardWithAi() { const c = getFilteredCards(); if (c.length) requestGeminiExplanationById(c[currentCardIndex].id, 'flashcardAiBox'); }
+
+    async function generateHintForModalWithAi() {
+      const f = document.getElementById('inputCardFront').value.trim(), b = document.getElementById('inputCardBack').value.trim(), inp = document.getElementById('inputCardHint');
+      if (!f || !b) { alert('Enter Front & Back first!'); return; }
+      inp.value = '✨ Generating...';
+      try {
+        const r = await callGeminiSmart(`Give a 1-line memory trick (max 10 words) to remember "${f}" means "${b}". Reply ONLY with the hint.`);
+        inp.value = r.text.trim();
+      } catch (e) { inp.value = ''; openModal('aiModal'); }
+    }
+
+    function getFolderById(id) { return appData.folders.find(f => f.id === id); }
+    function getChildFolders(pid) { return appData.folders.filter(f => f.parentId === pid); }
+    function getDescendantFolderIds(fid) { let ids = [fid]; getChildFolders(fid).forEach(ch => { ids = ids.concat(getDescendantFolderIds(ch.id)); }); return ids; }
+    function getRootSubjectFolderId(fid) { let c = getFolderById(fid); while (c && c.parentId) { const p = getFolderById(c.parentId); if (!p) break; c = p; } return c ? c.id : fid; }
+    function getBreadcrumbPath(fid) { const p = []; let c = getFolderById(fid); while (c) { p.unshift(c); c = c.parentId ? getFolderById(c.parentId) : null; } return p; }
+    function getCardsForFolder(fid, inc = true) { if (!fid) return appData.cards; const ids = inc ? getDescendantFolderIds(fid) : [fid]; return appData.cards.filter(c => ids.includes(c.folderId)); }
+    function getFilteredCards() {
+      let list = [...getCardsForFolder(activeFolderId, includeSubfolders)];
+      if (starredOnly) list = list.filter(c => c.starred);
+      if (activeMode === 'spaced') { const o = { new: 0, learning: 1, mastered: 2 }; list.sort((a, b) => (o[a.status] ?? 0) - (o[b.status] ?? 0)); }
+      if (searchQuery.trim()) { const q = searchQuery.toLowerCase(); list = list.filter(c => c.front.toLowerCase().includes(q) || c.back.toLowerCase().includes(q) || (c.hint && c.hint.toLowerCase().includes(q))); }
+      return list;
+    }
+
+    function populateFolderDropdown(selectId, defaultFolderId) {
+      const sel = document.getElementById(selectId);
+      if (!sel) return;
+      const target = defaultFolderId || activeFolderId || appData.folders[0]?.id;
+      sel.innerHTML = appData.folders.map(f => {
+        const path = getBreadcrumbPath(f.id).map(p => `${p.icon || '📁'} ${p.name}`).join(' › ');
+        return `<option value="${f.id}" ${f.id === target ? 'selected' : ''}>${escapeHtml(path)}</option>`;
+      }).join('');
+    }
+
+    function buildFolderTreeHtml(pid = null, d = 0) {
+      return getChildFolders(pid).map(f => {
+        const act = f.id === activeFolderId, cnt = getCardsForFolder(f.id, true).length;
+        const ic = f.icon || (d === 0 ? '📁' : '📂');
+        return `<div style="margin-left:${d * 12}px" class="space-y-1">
+          <div onclick="selectFolder('${f.id}')" class="cursor-pointer px-3 py-2 rounded-2xl border text-xs sm:text-sm flex items-center justify-between gap-1 transition ${act ? 'btn-accent font-extrabold shadow-md' : 'sub-glass text-main hover:opacity-90'}">
+            <span class="truncate">${ic} ${escapeHtml(f.name)}</span>
+            <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-black/20 font-bold">${cnt}</span>
+              <button type="button" onclick="openCardModal(null, '${f.id}')" class="w-6 h-6 rounded-lg bg-black/25 hover:bg-black/50 font-extrabold text-xs flex items-center justify-center text-white" title="Add card">+</button>
+            </div>
+          </div>${buildFolderTreeHtml(f.id, d + 1)}</div>`;
+      }).join('');
+    }
+
+    function renderAll() {
+      if (!getFolderById(activeFolderId) && appData.folders.length) activeFolderId = appData.folders[0].id;
+      const th = buildFolderTreeHtml(null, 0);
+      document.getElementById('desktopFolderTree').innerHTML = th;
+      document.getElementById('mobileFolderTree').innerHTML = th;
+
+      const folder = getFolderById(activeFolderId);
+      const sc = getCardsForFolder(activeFolderId, includeSubfolders);
+      if (folder) {
+        const path = getBreadcrumbPath(activeFolderId);
+        document.getElementById('folderBreadcrumb').innerHTML = path.map((n, i) => `<button type="button" onclick="selectFolder('${n.id}')" class="hover:underline">${n.icon || '📁'} ${escapeHtml(n.name)}</button>${i < path.length - 1 ? '<span class="opacity-60">›</span>' : ''}`).join('');
+        document.getElementById('activeFolderTitle').textContent = `${folder.icon || '📁'} ${folder.name}`;
+        document.getElementById('activeFolderCount').textContent = `${sc.length} cards`;
+
+        const ch = getChildFolders(activeFolderId), pb = document.getElementById('subfolderPillsContainer');
+        if (ch.length) {
+          pb.classList.remove('hidden');
+          document.getElementById('subfolderPillsList').innerHTML = `<span class="text-[11px] font-bold text-sub">Subfolders:</span>` + ch.map(c => `
+            <div class="inline-flex items-center rounded-xl btn-soft overflow-hidden text-xs font-bold shadow-sm">
+              <button type="button" onclick="selectFolder('${c.id}')" class="px-2.5 py-1 hover:opacity-80">${c.icon || '📂'} ${escapeHtml(c.name)} (${getCardsForFolder(c.id, true).length})</button>
+              <button type="button" onclick="openCardModal(null, '${c.id}')" class="px-2 py-1 bg-indigo-500/20 text-indigo-400 font-extrabold border-l border-slate-500/20" title="Add card">+</button>
+            </div>`).join('');
+        } else pb.classList.add('hidden');
+
+        const m = sc.filter(c => c.status === 'mastered').length, l = sc.filter(c => c.status === 'learning').length, n = sc.filter(c => c.status === 'new').length;
+        const total = sc.length || 1;
+        document.getElementById('masteryPercentBadge').textContent = sc.length ? Math.round((m / sc.length) * 100) + '%' : '0%';
+        document.getElementById('countMastered').textContent = m; document.getElementById('countLearning').textContent = l; document.getElementById('countNew').textContent = n;
+        document.getElementById('barMastered').style.width = `${(m / total) * 100}%`;
+        document.getElementById('barLearning').style.width = `${(l / total) * 100}%`;
+        document.getElementById('barNew').style.width = `${(n / total) * 100}%`;
+      }
+
+      const mc = appData.cards.filter(c => (c.mistakeCount || 0) > 0).length, mb = document.getElementById('mistakeTabBadge');
+      mb.textContent = mc; mb.classList.toggle('hidden', mc === 0);
+
+      const isEmpty = sc.length === 0 && (activeMode === 'flashcards' || activeMode === 'spaced');
+      document.getElementById('emptyFolderLaunchpad').classList.toggle('hidden', !isEmpty);
+      if (isEmpty && folder) {
+        document.getElementById('emptyFolderNameTitle').textContent = `"${folder.name}" is Ready for Cards!`;
+      }
+      document.getElementById('view-flashcards').classList.toggle('hidden', isEmpty || (activeMode !== 'flashcards' && activeMode !== 'spaced'));
+
+      document.getElementById('btnFilterStarred').className = starredOnly
+        ? 'px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-500 border border-amber-500/30 font-bold'
+        : 'px-2.5 py-1 rounded-lg btn-soft font-semibold';
+
+      renderActiveFlashcard();
+      renderMistakeNotebook();
+      renderDeckCardsTable();
+      updateModeTabs();
+      updateYptUI();
+    }
+
+    function renderActiveFlashcard() {
+      const cards = getFilteredCards();
+      document.getElementById('flashcardInner').classList.toggle('is-flipped', isFlipped);
+      document.getElementById('flashcardAiBox').classList.add('hidden');
+      const fImg = document.getElementById('cardFrontImage'), bImg = document.getElementById('cardBackImage'), hb = document.getElementById('cardHintBox'), hBtn = document.getElementById('btnToggleHint');
+      if (!cards.length) {
+        document.getElementById('cardProgressCounter').textContent = '0 / 0'; return;
+      }
+      if (currentCardIndex >= cards.length) currentCardIndex = 0;
+      const card = cards[currentCardIndex];
+      const fFolder = getFolderById(card.folderId);
+      document.getElementById('cardFolderBadge').textContent = fFolder ? `${fFolder.icon || '📁'} ${fFolder.name}` : 'Folder';
+
+      const frontText = reverseCardDir ? card.back : card.front;
+      const backText  = reverseCardDir ? card.front : card.back;
+      document.getElementById('cardFrontText').textContent = frontText;
+      document.getElementById('cardBackText').textContent = backText;
+
+      const pct = Math.round(((currentCardIndex + 1) / cards.length) * 100);
+      document.getElementById('cardTopProgressFill').style.width = `${pct}%`;
+
+      if (card.image && (card.imageSide === 'both' || card.imageSide === 'front')) { fImg.src = card.image; fImg.classList.remove('hidden'); } else fImg.classList.add('hidden');
+      if (card.image && (card.imageSide === 'both' || card.imageSide === 'back')) { bImg.src = card.image; bImg.classList.remove('hidden'); } else bImg.classList.add('hidden');
+
+      if (card.hint) {
+        hBtn.innerHTML = isHintVisible ? '🙈 Hide Hint' : '💡 Hint';
+        hBtn.className = 'px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 font-extrabold text-xs';
+        document.getElementById('cardHintText').textContent = `💡 ${card.hint}`;
+        hb.classList.toggle('hidden', !isHintVisible);
+      } else {
+        hBtn.innerHTML = '💡 No Hint';
+        hBtn.className = 'px-2.5 py-1 rounded-xl btn-soft text-sub text-xs';
+        hb.classList.add('hidden');
+      }
+
+      const starText = card.starred ? '⭐ Unstar' : '⭐ Star';
+      document.getElementById('starBtnFront').textContent = card.starred ? '⭐' : '☆';
+      document.getElementById('starBtnBack').textContent = starText;
+
+      document.getElementById('cardStatusBadge').textContent = card.status.toUpperCase();
+      document.getElementById('cardProgressCounter').textContent = `${currentCardIndex + 1} / ${cards.length}`;
+    }
+
+    function toggleReverseCards() {
+      reverseCardDir = !reverseCardDir;
+      document.getElementById('btnReverseToggle').textContent = reverseCardDir ? '🔄 Def → Term' : '🔄 Term → Def';
+      isFlipped = false;
+      renderActiveFlashcard();
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) { clearTimeout(autoPlayTimer); autoPlayTimer = null; }
+      const btn = document.getElementById('btnAutoPlay');
+      if (btn) { btn.textContent = '🎧 Auto-Play'; btn.className = 'ml-1 px-3 py-2 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 text-xs font-extrabold'; }
+    }
+    function toggleAutoPlayAudio() {
+      if (autoPlayTimer) { stopAutoPlay(); return; }
+      const cards = getFilteredCards();
+      if (!cards.length) return;
+      const btn = document.getElementById('btnAutoPlay');
+      btn.textContent = '⏹ Stop Audio';
+      btn.className = 'ml-1 px-3 py-2 rounded-xl bg-rose-600 text-white text-xs font-extrabold shadow';
+      runAutoPlayStep();
+    }
+    function runAutoPlayStep() {
+      const cards = getFilteredCards();
+      if (!cards.length) { stopAutoPlay(); return; }
+      isFlipped = false; renderActiveFlashcard();
+      speakCurrentSide('front');
+      autoPlayTimer = setTimeout(() => {
+        isFlipped = true; renderActiveFlashcard();
+        speakCurrentSide('back');
+        autoPlayTimer = setTimeout(() => {
+          currentCardIndex = (currentCardIndex + 1) % cards.length;
+          runAutoPlayStep();
+        }, 3800);
+      }, 3500);
+    }
+
+    function maskWordForHint(word) {
+      return String(word || '').split('').map((ch, idx) => {
+        if (ch === ' ' || ch === '-') return ch;
+        if (idx === 0 || idx === word.length - 1 || idx % 3 === 0) return ch;
+        return '_';
+      }).join(' ');
+    }
+    function loadNextTypeCard() {
+      const pool = getFilteredCards();
+      const fb = document.getElementById('typeFeedbackBox');
+      fb.classList.add('hidden');
+      document.getElementById('typeAnswerInput').value = '';
+      if (!pool.length) {
+        document.getElementById('typePromptText').textContent = 'No cards in this folder yet.';
+        document.getElementById('typeMaskHint').textContent = '---';
+        return;
+      }
+      currentTypeCard = pool[Math.floor(Math.random() * pool.length)];
+      document.getElementById('typePromptText').textContent = currentTypeCard.back;
+      document.getElementById('typeMaskHint').textContent = maskWordForHint(currentTypeCard.front);
+      document.getElementById('typeStarBtn').textContent = currentTypeCard.starred ? '⭐ Starred' : '⭐ Star Word';
+    }
+    function toggleStarTypeCard() {
+      if (!currentTypeCard) return;
+      currentTypeCard.starred = !currentTypeCard.starred;
+      saveToStorage();
+      document.getElementById('typeStarBtn').textContent = currentTypeCard.starred ? '⭐ Starred' : '⭐ Star Word';
+      renderAll();
+    }
+    function checkTypedAnswer() {
+      if (!currentTypeCard) return;
+      const val = document.getElementById('typeAnswerInput').value.trim().toLowerCase();
+      const target = currentTypeCard.front.trim().toLowerCase();
+      const fb = document.getElementById('typeFeedbackBox');
+      fb.classList.remove('hidden');
+      if (val && (val === target || target.includes(val) && val.length >= 4)) {
+        currentTypeCard.status = 'mastered';
+        yptSession.cardsReviewed++; updateYptUI(); saveToStorage();
+        fb.className = 'p-4 rounded-2xl text-xs sm:text-sm font-extrabold bg-emerald-500/20 text-emerald-500 border border-emerald-500/40 flex items-center justify-between';
+        fb.innerHTML = `<span>✅ Spot On! "${escapeHtml(currentTypeCard.front)}" marked Mastered.</span><button type="button" onclick="loadNextTypeCard()" class="px-3 py-1 rounded-xl bg-emerald-600 text-white">Next →</button>`;
+      } else {
+        fb.className = 'p-4 rounded-2xl text-xs sm:text-sm font-extrabold bg-rose-500/20 text-rose-500 border border-rose-500/40';
+        fb.textContent = `❌ Not quite! Look at the letter mask above or tap Reveal.`;
+      }
+    }
+    function revealTypedAnswer() {
+      if (!currentTypeCard) return;
+      document.getElementById('typeAnswerInput').value = currentTypeCard.front;
+      const fb = document.getElementById('typeFeedbackBox');
+      fb.classList.remove('hidden');
+      fb.className = 'p-4 rounded-2xl text-xs sm:text-sm font-extrabold bg-amber-500/20 text-amber-500 border border-amber-500/40 flex items-center justify-between';
+      fb.innerHTML = `<span>💡 Answer: "${escapeHtml(currentTypeCard.front)}"</span><button type="button" onclick="loadNextTypeCard()" class="px-3 py-1 rounded-xl btn-accent">Next Word →</button>`;
+    }
+
+    function toggleHintVisibility() {
+      const cards = getFilteredCards(); if (!cards.length) return;
+      if (!cards[currentCardIndex].hint) { quickEditCardHint(); return; }
+      isHintVisible = !isHintVisible; renderActiveFlashcard();
+    }
+    function quickEditCardHint() {
+      const cards = getFilteredCards(); if (!cards.length) return;
+      const card = cards[currentCardIndex];
+      const h = prompt(`Enter memory hint for "${card.front}":`, card.hint || '');
+      if (h !== null) { card.hint = h.trim(); isHintVisible = Boolean(card.hint); saveToStorage(); renderAll(); }
+    }
+
+    function renderMistakeNotebook() {
+      const m = appData.cards.filter(c => (c.mistakeCount || 0) > 0).sort((a, b) => b.mistakeCount - a.mistakeCount);
+      const el = document.getElementById('mistakeNotebookList');
+      if (!m.length) { el.innerHTML = `<div class="text-center py-10 text-xs text-sub">🎉 Mistake Book is empty!</div>`; return; }
+      el.innerHTML = m.map(c => `<div class="p-4 rounded-2xl sub-glass border-rose-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-500 text-xs font-extrabold">❌ Missed ${c.mistakeCount}x</span>
+          <div class="flex gap-2">
+            <button type="button" onclick="requestGeminiExplanationById('${c.id}', 'm-ai-${c.id}')" class="px-2.5 py-1 rounded-lg bg-violet-500/20 text-violet-400 text-xs font-bold">✨ AI Explain</button>
+            <button type="button" onclick="resolveMistakeCard('${c.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-500 text-xs font-bold">✓ Mastered</button>
+          </div>
+        </div>
+        <div class="font-extrabold text-sm text-main">${escapeHtml(c.front)}</div>
+        <div class="text-xs text-emerald-500 font-bold">✓ Correct: ${escapeHtml(c.back)}</div>
+        ${c.lastWrongText ? `<div class="text-xs text-rose-500">⚠️ Last Wrong Pick: "${escapeHtml(c.lastWrongText)}"</div>` : ''}
+        <div id="m-ai-${c.id}" class="${c.aiExplanation ? '' : 'hidden'} p-3 rounded-xl panel-glass text-xs whitespace-pre-line">${escapeHtml(c.aiExplanation || '')}</div>
+      </div>`).join('');
+    }
+    function resolveMistakeCard(id) { const c = appData.cards.find(x => x.id === id); if (c) { c.mistakeCount = 0; c.status = 'mastered'; saveToStorage(); renderAll(); } }
+    function clearAllMistakes() { if (confirm('Clear Mistake Book?')) { appData.cards.forEach(c => c.mistakeCount = 0); saveToStorage(); renderAll(); } }
+
+    function renderDeckCardsTable() {
+      const cards = getFilteredCards();
+      document.getElementById('cardTableCount').textContent = cards.length;
+      const el = document.getElementById('deckCardsList');
+      const bulkBar = document.getElementById('bulkActionToolbar');
+      bulkBar.classList.toggle('hidden', selectedCardIds.size === 0);
+      if (selectedCardIds.size > 0) {
+        document.getElementById('selectedCardsCount').textContent = selectedCardIds.size;
+        populateFolderDropdown('bulkMoveTargetSelect', activeFolderId);
+      }
+
+      if (!cards.length) { el.innerHTML = `<div class="text-center py-4 text-xs text-sub">No cards in this folder yet. Tap "+ Add Card Here" above!</div>`; return; }
+      el.innerHTML = cards.map(c => {
+        const fd = getFolderById(c.folderId);
+        const checked = selectedCardIds.has(c.id) ? 'checked' : '';
+        const starIcon = c.starred ? '⭐' : '☆';
+        return `<div class="p-3 rounded-2xl sub-glass flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <input type="checkbox" ${checked} onchange="toggleSelectCard('${c.id}', this.checked)" class="rounded w-4 h-4 accent-indigo-600 shrink-0" />
+            ${c.image ? `<img src="${c.image}" class="w-10 h-10 rounded-lg object-cover shrink-0" />` : ''}
+            <div class="truncate">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-extrabold text-xs sm:text-sm text-main truncate">${escapeHtml(c.front)}</span>
+                <span class="text-[10px] px-2 py-0.2 rounded-full btn-soft font-bold">${fd ? escapeHtml(fd.name) : ''}</span>
+                ${c.hint ? `<span class="text-[10px] px-1.5 rounded bg-amber-500/15 text-amber-500 font-bold">💡 Hint</span>` : ''}
+              </div>
+              <div class="text-xs text-sub truncate">${escapeHtml(c.back)}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="toggleStarById('${c.id}')" class="px-2 py-1 rounded-lg btn-soft text-xs font-bold" title="Star Important Word">${starIcon}</button>
+            <button type="button" onclick="openCardModal('${c.id}')" class="px-2 py-1 rounded-lg btn-soft text-xs font-bold">✎</button>
+            <button type="button" onclick="deleteCard('${c.id}')" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-500 text-xs font-bold">🗑</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function toggleSelectCard(id, isChecked) {
+      if (isChecked) selectedCardIds.add(id); else selectedCardIds.delete(id);
+      renderDeckCardsTable();
+    }
+    function toggleSelectAllCards(isChecked) {
+      const cards = getFilteredCards();
+      if (isChecked) cards.forEach(c => selectedCardIds.add(c.id));
+      else selectedCardIds.clear();
+      renderDeckCardsTable();
+    }
+    function moveSelectedCardsToFolder() {
+      const targetFid = document.getElementById('bulkMoveTargetSelect').value;
+      if (!targetFid) return;
+      appData.cards.forEach(c => { if (selectedCardIds.has(c.id)) c.folderId = targetFid; });
+      selectedCardIds.clear();
+      document.getElementById('selectAllCardsCheck').checked = false;
+      saveToStorage(); renderAll();
+    }
+    function deleteSelectedCards() {
+      if (!confirm(`Delete ${selectedCardIds.size} selected cards?`)) return;
+      appData.cards = appData.cards.filter(c => !selectedCardIds.has(c.id));
+      selectedCardIds.clear();
+      document.getElementById('selectAllCardsCheck').checked = false;
+      saveToStorage(); renderAll();
+    }
+
+    function selectFolder(id) {
+      stopAutoPlay();
+      activeFolderId = id; currentCardIndex = 0; isFlipped = false; isHintVisible = false;
+      selectedCardIds.clear(); closeMobileSidebar(); renderAll();
+      if (activeMode === 'type') loadNextTypeCard();
+      if (activeMode === 'exam') showExamSetup();
+      if (activeMode === 'match') startMatchGame();
+    }
+    function toggleMobileSidebar() {
+      const b = document.getElementById('mobileSidebarBackdrop'), d = document.getElementById('mobileSidebarDrawer'), h = !b.classList.contains('hidden');
+      b.classList.toggle('hidden', h); d.classList.toggle('-translate-x-full', h);
+    }
+    function closeMobileSidebar() {
+      document.getElementById('mobileSidebarBackdrop').classList.add('hidden');
+      document.getElementById('mobileSidebarDrawer').classList.add('-translate-x-full');
+    }
+
+    function openFolderModal(pid = null) {
+      document.getElementById('folderEditModeInput').value = 'create';
+      document.getElementById('folderParentIdInput').value = pid || '';
+      document.getElementById('inputFolderName').value = '';
+      document.getElementById('inputFolderIcon').value = pid ? '📂' : '📁';
+      const p = pid ? getFolderById(pid) : null;
+      document.getElementById('folderModalTitle').textContent = p ? 'Create Subfolder' : 'Create Main Folder';
+      document.getElementById('folderParentNotice').textContent = p ? `Creating inside: ${p.icon || '📁'} ${p.name}` : 'Creating Top-Level Subject Folder';
+      openModal('folderModal');
+    }
+    function openRenameFolderModal() {
+      const f = getFolderById(activeFolderId); if (!f) return;
+      document.getElementById('folderEditModeInput').value = 'rename';
+      document.getElementById('inputFolderName').value = f.name;
+      document.getElementById('inputFolderIcon').value = f.icon || '📁';
+      document.getElementById('folderModalTitle').textContent = 'Rename Folder';
+      document.getElementById('folderParentNotice').textContent = `Editing: ${f.name}`;
+      openModal('folderModal');
+    }
+    function saveFolderModal() {
+      const name = document.getElementById('inputFolderName').value.trim();
+      const icon = document.getElementById('inputFolderIcon').value || '📁';
+      if (!name) return;
+      if (document.getElementById('folderEditModeInput').value === 'rename') {
+        const f = getFolderById(activeFolderId); if (f) { f.name = name; f.icon = icon; }
+      } else {
+        const pid = document.getElementById('folderParentIdInput').value || null;
+        const nf = { id: 'f-' + Date.now(), name, icon, parentId: pid };
+        appData.folders.push(nf); activeFolderId = nf.id;
+      }
+      closeModal('folderModal'); closeMobileSidebar(); saveToStorage(); renderAll();
+    }
+    function deleteActiveFolder() {
+      if (appData.folders.length <= 1) { alert('Keep at least 1 folder.'); return; }
+      const f = getFolderById(activeFolderId); if (!f || !confirm(`Delete "${f.name}" and its cards?`)) return;
+      const ids = getDescendantFolderIds(activeFolderId);
+      appData.folders = appData.folders.filter(x => !ids.includes(x.id));
+      appData.cards = appData.cards.filter(x => !ids.includes(x.folderId));
+      activeFolderId = f.parentId || appData.folders[0]?.id; saveToStorage(); renderAll();
+    }
+    function toggleIncludeSubfolders() {
+      includeSubfolders = document.getElementById('includeSubfoldersToggle').checked;
+      document.getElementById('subfoldersScopeHint').textContent = includeSubfolders ? 'ON' : 'OFF';
+      currentCardIndex = 0; isHintVisible = false; renderAll();
+    }
+
+    function handleImageUpload(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas'), MAX = 500;
+          let w = img.width, h = img.height; if (w > MAX) { h = Math.round((h * MAX) / w); w = MAX; }
+          c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+          tempCardImageData = c.toDataURL('image/jpeg', 0.75);
+          document.getElementById('imagePreviewThumb').src = tempCardImageData;
+          document.getElementById('imagePreviewWrapper').classList.remove('hidden');
+        };
+        img.src = ev.target.result;
+      };
+      r.readAsDataURL(file);
+    }
+    function clearAttachedImage() { tempCardImageData = null; document.getElementById('inputCardImageFile').value = ''; document.getElementById('imagePreviewWrapper').classList.add('hidden'); }
+
+    function openCardModal(cid = null, forceFolderId = null) {
+      const c = cid ? appData.cards.find(x => x.id === cid) : null;
+      document.getElementById('cardModalTitle').textContent = c ? 'Edit Flashcard' : 'Add Flashcard';
+      document.getElementById('editCardId').value = c ? c.id : '';
+      document.getElementById('inputCardFront').value = c ? c.front : '';
+      document.getElementById('inputCardBack').value = c ? c.back : '';
+      document.getElementById('inputCardHint').value = c?.hint || '';
+      document.getElementById('inputCardImageSide').value = c?.imageSide || 'both';
+      const targetFid = c ? c.folderId : (forceFolderId || activeFolderId);
+      populateFolderDropdown('inputCardFolderSelect', targetFid);
+      if (c && c.image) { tempCardImageData = c.image; document.getElementById('imagePreviewThumb').src = c.image; document.getElementById('imagePreviewWrapper').classList.remove('hidden'); } else clearAttachedImage();
+      openModal('cardModal');
+    }
+    function editCurrentCard() { const c = getFilteredCards(); if (c.length) openCardModal(c[currentCardIndex].id); }
+    function saveCard() {
+      const front = document.getElementById('inputCardFront').value.trim(), back = document.getElementById('inputCardBack').value.trim(), hint = document.getElementById('inputCardHint').value.trim(), folderId = document.getElementById('inputCardFolderSelect').value || activeFolderId, imageSide = document.getElementById('inputCardImageSide').value, editId = document.getElementById('editCardId').value;
+      if (!front || !back) return;
+      if (editId) {
+        const c = appData.cards.find(x => x.id === editId);
+        if (c) { c.front = front; c.back = back; c.hint = hint; c.folderId = folderId; c.image = tempCardImageData; c.imageSide = imageSide; }
+      } else {
+        appData.cards.push({ id: 'c-' + Date.now(), folderId, front, back, hint, status: 'new', starred: false, image: tempCardImageData, imageSide, mistakeCount: 0, lastWrongText: null, aiExplanation: null });
+        activeFolderId = folderId;
+      }
+      closeModal('cardModal'); saveToStorage(); renderAll();
+    }
+    function deleteCard(id) { if (confirm('Delete card?')) { appData.cards = appData.cards.filter(c => c.id !== id); saveToStorage(); renderAll(); } }
+    function toggleStarById(id) {
+      const c = appData.cards.find(x => x.id === id);
+      if (c) { c.starred = !c.starred; saveToStorage(); renderAll(); }
+    }
+
+    function openBulkModal(forceFolderId = null) {
+      populateFolderDropdown('bulkTargetFolderSelect', forceFolderId || activeFolderId);
+      openModal('importModal');
+    }
+    function processBulkImport() {
+      const raw = document.getElementById('bulkImportText').value.trim();
+      const targetFid = document.getElementById('bulkTargetFolderSelect').value || activeFolderId;
+      if (!raw) return;
+      raw.split('\n').forEach((line, i) => {
+        const parts = line.includes('|') ? line.split('|') : line.split(' - ');
+        if (parts.length >= 2) {
+          const front = parts[0].trim(), back = parts[1].trim(), hint = parts.length >= 3 ? parts.slice(2).join(' - ').trim() : '';
+          if (front && back) appData.cards.push({ id: `imp-${Date.now()}-${i}`, folderId: targetFid, front, back, hint, status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null });
+        }
+      });
+      activeFolderId = targetFid;
+      document.getElementById('bulkImportText').value = ''; closeModal('importModal'); saveToStorage(); renderAll();
+    }
+
+    function openAiGenModal(forceFolderId = null) {
+      populateFolderDropdown('aiGenFolderSelect', forceFolderId || activeFolderId);
+      openModal('aiGenModal');
+    }
+    async function generateCardsWithAi() {
+      const topic = document.getElementById('aiGenTopicInput').value.trim(), count = document.getElementById('aiGenCountSelect').value, targetFid = document.getElementById('aiGenFolderSelect').value || activeFolderId, st = document.getElementById('aiGenStatus');
+      if (!topic) return;
+      st.classList.remove('hidden'); st.className = 'p-2.5 rounded-xl text-xs bg-fuchsia-500/20 text-fuchsia-400'; st.textContent = `✨ Generating ${count} cards...`;
+      try {
+        const r = await callGeminiSmart(`Generate ${count} exam flashcards on "${topic}". Format each line strictly as: Term | Meaning | Short Memory Hint. Output ONLY the lines.`);
+        let added = 0;
+        r.text.split('\n').forEach((l, i) => {
+          const p = l.replace(/^\d+[\.\)]\s*/, '').split('|');
+          if (p.length >= 2 && p[0].trim() && p[1].trim()) {
+            appData.cards.push({ id: `ai-${Date.now()}-${i}`, folderId: targetFid, front: p[0].trim(), back: p[1].trim(), hint: (p[2] || '').trim(), status: 'new', starred: false, image: null, imageSide: 'both', mistakeCount: 0, lastWrongText: null, aiExplanation: null });
+            added++;
+          }
+        });
+        activeFolderId = targetFid;
+        saveToStorage(); renderAll();
+        st.className = 'p-2.5 rounded-xl text-xs bg-emerald-500/20 text-emerald-500'; st.textContent = `✅ Added ${added} cards!`;
+        setTimeout(() => { closeModal('aiGenModal'); st.classList.add('hidden'); }, 900);
+      } catch (e) { st.className = 'p-2.5 rounded-xl text-xs bg-rose-500/20 text-rose-500'; st.textContent = `Error: ${e.message}`; }
+    }
+
+    // ==================== MOCK EXAM & MATCH ====================
+    function showExamSetup() {
+      clearInterval(examTimerInterval);
+      document.getElementById('examSetupPanel').classList.remove('hidden');
+      document.getElementById('examActivePanel').classList.add('hidden');
+      document.getElementById('examResultPanel').classList.add('hidden');
+    }
+    function startMockExam(forceMistakes = false) {
+      if (forceMistakes) setStudyMode('exam');
+      const srcVal = forceMistakes ? 'mistakes_only' : document.getElementById('examCountSelect').value;
+      let pool = [];
+      if (srcVal === 'mistakes_only') {
+        pool = appData.cards.filter(c => (c.mistakeCount || 0) > 0);
+      } else if (srcVal === 'starred_only') {
+        pool = getCardsForFolder(activeFolderId, includeSubfolders).filter(c => c.starred);
+      } else {
+        pool = getCardsForFolder(activeFolderId, includeSubfolders);
+      }
+
+      if (pool.length < 2 && srcVal !== 'mistakes_only' && srcVal !== 'starred_only') { alert('Add at least 2 cards in this folder first.'); return; }
+      if (!pool.length) { alert('No cards match your selected source!'); return; }
+
+      const pattern = document.getElementById('examPatternSelect').value, maxCount = (srcVal === 'mistakes_only' || srcVal === 'starred_only') ? 999 : parseInt(srcVal, 10);
+      examConfig.negMark = parseFloat(document.getElementById('examNegativeSelect').value);
+      examConfig.feedbackMode = document.getElementById('examFeedbackModeSelect').value;
+
+      examQuestions = [...pool].sort(() => Math.random() - 0.5).slice(0, maxCount).map(card => {
+        const mode = pattern === 'mixed' ? (Math.random() > 0.5 ? 'def_to_term' : 'term_to_def') : pattern;
+        const rootId = getRootSubjectFolderId(card.folderId), subjIds = getDescendantFolderIds(rootId);
+        const sameSub = appData.cards.filter(c => c.id !== card.id && c.folderId === card.folderId).sort(() => Math.random() - 0.5);
+        const sameRoot = appData.cards.filter(c => c.id !== card.id && c.folderId !== card.folderId && subjIds.includes(c.folderId)).sort(() => Math.random() - 0.5);
+        const opts = [card, ...[...sameSub, ...sameRoot].slice(0, 3)].sort(() => Math.random() - 0.5);
+        return {
+          cardId: card.id, hint: card.hint || '', showHint: false,
+          typeLabel: mode === 'def_to_term' ? 'OWS / Reverse MCQ' : 'Standard Meaning MCQ',
+          prompt: mode === 'def_to_term' ? `Which word/term best fits:\n"${card.back}"` : `Choose the correct meaning for:\n"${card.front}"`,
+          image: card.image, options: opts.map(o => ({ id: o.id, text: mode === 'def_to_term' ? o.front : o.back })),
+          correctOptionId: card.id, selectedOptionId: null, loggedToYpt: false
+        };
+      });
+      examCurrentIndex = 0; examSecondsElapsed = 0;
+      document.getElementById('examSetupPanel').classList.add('hidden');
+      document.getElementById('examResultPanel').classList.add('hidden');
+      document.getElementById('examActivePanel').classList.remove('hidden');
+      clearInterval(examTimerInterval);
+      examTimerInterval = setInterval(() => {
+        examSecondsElapsed++;
+        document.getElementById('examTimerDisplay').textContent = `${String(Math.floor(examSecondsElapsed / 60)).padStart(2, '0')}:${String(examSecondsElapsed % 60).padStart(2, '0')}`;
+      }, 1000);
+      renderExamQuestion();
+    }
+
+    function toggleExamQuestionHint() {
+      const q = examQuestions[examCurrentIndex]; if (!q) return;
+      if (!q.hint) { alert('No hint saved for this card.'); return; }
+      q.showHint = !q.showHint; renderExamQuestion();
+    }
+    function toggleStarExamQuestion() {
+      const q = examQuestions[examCurrentIndex]; if (!q) return;
+      const card = appData.cards.find(c => c.id === q.cardId);
+      if (card) {
+        card.starred = !card.starred;
+        saveToStorage();
+        document.getElementById('examStarBtn').textContent = card.starred ? '⭐ Starred' : '⭐ Star';
+        renderAll();
+      }
+    }
+
+    function renderExamQuestion() {
+      const q = examQuestions[examCurrentIndex]; if (!q) return;
+      document.getElementById('examQCounter').textContent = `Q. ${examCurrentIndex + 1} / ${examQuestions.length}`;
+      document.getElementById('examQuestionTypeTag').textContent = q.typeLabel;
+      document.getElementById('examQuestionStem').textContent = q.prompt;
+      const card = appData.cards.find(c => c.id === q.cardId);
+      if (card) document.getElementById('examStarBtn').textContent = card.starred ? '⭐ Starred' : '⭐ Star';
+
+      const hb = document.getElementById('examQuestionHintBox');
+      if (q.hint && q.showHint) { hb.textContent = `💡 Hint: ${q.hint}`; hb.classList.remove('hidden'); } else hb.classList.add('hidden');
+      const img = document.getElementById('examQuestionImage');
+      if (q.image) { img.src = q.image; img.classList.remove('hidden'); } else img.classList.add('hidden');
+
+      const letters = ['A', 'B', 'C', 'D'];
+      document.getElementById('examOptionsGrid').innerHTML = q.options.map((opt, i) => {
+        const sel = q.selectedOptionId === opt.id;
+        let cls = 'sub-glass text-main';
+        if (examConfig.feedbackMode === 'instant' && q.selectedOptionId) {
+          if (opt.id === q.correctOptionId) cls = 'bg-emerald-500/20 border-emerald-500 text-emerald-500 font-extrabold';
+          else if (sel) cls = 'bg-rose-500/20 border-rose-500 text-rose-500 font-extrabold';
+        } else if (sel) cls = 'btn-accent font-extrabold';
+        return `<button type="button" onclick="selectExamOption('${opt.id}')" class="p-3.5 rounded-2xl border text-left text-xs sm:text-sm flex items-start gap-3 ${cls}">
+          <span class="w-6 h-6 rounded-lg bg-black/20 text-xs font-extrabold flex items-center justify-center shrink-0">${letters[i]}</span>
+          <span>${escapeHtml(opt.text)}</span></button>`;
+      }).join('');
+
+      const tb = document.getElementById('examInstantTutorBox');
+      if (examConfig.feedbackMode === 'instant' && q.selectedOptionId && card) {
+        tb.classList.remove('hidden');
+        const chosen = q.options.find(o => o.id === q.selectedOptionId);
+        if (q.selectedOptionId === q.correctOptionId) {
+          tb.className = 'p-3.5 rounded-2xl border bg-emerald-500/10 border-emerald-500/30 text-xs';
+          tb.innerHTML = `<strong class="text-emerald-500">✓ Correct! (+1.0)</strong>`;
+        } else {
+          tb.className = 'p-3.5 rounded-2xl border bg-rose-500/10 border-rose-500/40 space-y-2 text-xs';
+          tb.innerHTML = `<div class="flex items-center justify-between"><strong class="text-rose-500">✕ Added to 📕 Mistake Book</strong><button type="button" onclick="requestGeminiExplanationById('${card.id}', 'instantAiSubBox')" class="px-2.5 py-1 rounded-lg bg-violet-600 text-white font-bold">✨ AI Explain</button></div>${getSmartTrapExplanation(card, chosen?.text || '')}<div id="instantAiSubBox" class="${card.aiExplanation ? '' : 'hidden'} pt-2 border-t border-slate-500/20 whitespace-pre-line">${escapeHtml(card.aiExplanation || '')}</div>`;
+        }
+      } else tb.classList.add('hidden');
+      document.getElementById('examPaletteGrid').innerHTML = examQuestions.map((x, idx) => `<button type="button" onclick="goExamQuestion(${idx})" class="w-7 h-7 rounded-lg text-xs font-extrabold ${x.selectedOptionId ? 'bg-emerald-600 text-white' : 'btn-soft'} ${idx === examCurrentIndex ? 'ring-2 ring-indigo-400' : ''}">${idx + 1}</button>`).join('');
+    }
+
+    function selectExamOption(optId) {
+      const q = examQuestions[examCurrentIndex]; q.selectedOptionId = optId;
+      const card = appData.cards.find(c => c.id === q.cardId), chosen = q.options.find(o => o.id === optId);
+      if (!q.loggedToYpt) { q.loggedToYpt = true; yptSession.mcqsSolved++; if (optId === q.correctOptionId) yptSession.mcqsCorrect++; updateYptUI(); }
+      if (examConfig.feedbackMode === 'instant' && card) {
+        if (optId !== q.correctOptionId) { card.mistakeCount = (card.mistakeCount || 0) + 1; card.lastWrongText = chosen?.text || null; card.status = 'new'; }
+        else card.status = 'mastered';
+        saveToStorage();
+      }
+      renderExamQuestion();
+    }
+    function goExamQuestion(idx) { if (idx >= 0 && idx < examQuestions.length) { examCurrentIndex = idx; renderExamQuestion(); } }
+    function submitMockExam() {
+      clearInterval(examTimerInterval);
+      let cor = 0, wrg = 0, skp = 0;
+      examQuestions.forEach(q => {
+        const card = appData.cards.find(c => c.id === q.cardId), chosen = q.options.find(o => o.id === q.selectedOptionId);
+        if (!q.selectedOptionId) skp++;
+        else if (q.selectedOptionId === q.correctOptionId) { cor++; if (card) card.status = 'mastered'; }
+        else { wrg++; if (card && examConfig.feedbackMode !== 'instant') { card.mistakeCount = (card.mistakeCount || 0) + 1; card.lastWrongText = chosen?.text || null; card.status = 'new'; } }
+      });
+      document.getElementById('examActivePanel').classList.add('hidden');
+      document.getElementById('examResultPanel').classList.remove('hidden');
+      document.getElementById('examFinalScoreText').textContent = `Score: ${(cor - wrg * examConfig.negMark).toFixed(2)} / ${examQuestions.length}`;
+      document.getElementById('examFinalSummarySub').textContent = `✅ ${cor} Correct · ❌ ${wrg} Wrong · ⚪ ${skp} Skipped`;
+      document.getElementById('examSolutionsList').innerHTML = examQuestions.map((q, i) => {
+        const card = appData.cards.find(c => c.id === q.cardId), chosen = q.options.find(o => o.id === q.selectedOptionId), ok = q.selectedOptionId === q.correctOptionId;
+        return `<div class="p-3.5 rounded-2xl sub-glass border ${ok ? 'border-emerald-500/40' : 'border-rose-500/40'} space-y-2 text-xs">
+          <div class="flex justify-between gap-2"><span class="font-extrabold text-main">Q${i + 1}. ${escapeHtml(q.prompt)}</span>${!ok && card ? `<button type="button" onclick="requestGeminiExplanationById('${card.id}', 'sol-ai-${i}')" class="px-2 py-1 rounded bg-violet-600 text-white font-bold shrink-0">✨ AI Explain</button>` : ''}</div>
+          <div>Your Pick: <strong class="${ok ? 'text-emerald-500' : 'text-rose-500'}">${chosen ? escapeHtml(chosen.text) : 'Skipped'}</strong></div>
+          ${!ok && card ? getSmartTrapExplanation(card, chosen?.text || '') : ''}<div id="sol-ai-${i}" class="hidden p-2.5 rounded-xl panel-glass"></div></div>`;
+      }).join('');
+      saveToStorage(); renderAll();
+    }
+
+    function flipCard() { isFlipped = !isFlipped; if (isFlipped) { yptSession.cardsReviewed++; updateYptUI(); } document.getElementById('flashcardInner').classList.toggle('is-flipped', isFlipped); }
+    function nextCard() { const c = getFilteredCards(); if (!c.length) return; isFlipped = false; isHintVisible = false; currentCardIndex = (currentCardIndex + 1) % c.length; renderActiveFlashcard(); }
+    function prevCard() { const c = getFilteredCards(); if (!c.length) return; isFlipped = false; isHintVisible = false; currentCardIndex = (currentCardIndex - 1 + c.length) % c.length; renderActiveFlashcard(); }
+    function rateCurrentCard(st) {
+      const cards = getFilteredCards(); if (!cards.length) return;
+      const c = cards[currentCardIndex]; c.status = st;
+      if (st === 'new') c.mistakeCount = (c.mistakeCount || 0) + 1; else if (st === 'mastered') c.mistakeCount = 0;
+      saveToStorage(); renderAll(); nextCard();
+    }
+    function toggleStarCurrentCard() {
+      const cards = getFilteredCards(); if (!cards.length) return;
+      const c = cards[currentCardIndex];
+      c.starred = !c.starred;
+      saveToStorage(); renderAll();
+    }
+    function toggleStarredFilter() { starredOnly = !starredOnly; currentCardIndex = 0; isHintVisible = false; renderAll(); }
+    function shuffleActiveCards() { appData.cards.sort(() => Math.random() - 0.5); currentCardIndex = 0; isFlipped = false; isHintVisible = false; renderAll(); }
+    function speakCurrentSide(s) {
+      if (!('speechSynthesis' in window)) return;
+      const c = getFilteredCards(); if (!c.length) return;
+      const card = c[currentCardIndex];
+      const txt = (s === 'front') ? (reverseCardDir ? card.back : card.front) : (reverseCardDir ? card.front : card.back);
+      window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+    }
+
+    function setStudyMode(m) {
+      stopAutoPlay();
+      activeMode = m; isFlipped = false; isHintVisible = false;
+      clearInterval(matchTimerInterval); clearInterval(examTimerInterval);
+      document.getElementById('view-flashcards').classList.toggle('hidden', m !== 'flashcards' && m !== 'spaced');
+      document.getElementById('view-type').classList.toggle('hidden', m !== 'type');
+      document.getElementById('view-exam').classList.toggle('hidden', m !== 'exam');
+      document.getElementById('view-mistakes').classList.toggle('hidden', m !== 'mistakes');
+      document.getElementById('view-match').classList.toggle('hidden', m !== 'match');
+      renderAll();
+      if (m === 'type') loadNextTypeCard();
+      if (m === 'exam') showExamSetup();
+      if (m === 'mistakes') renderMistakeNotebook();
+      if (m === 'match') startMatchGame();
+    }
+    function updateModeTabs() {
+      ['flashcards', 'type', 'exam', 'mistakes', 'spaced', 'match'].forEach(m => {
+        const b = document.getElementById(`tab-${m}`); if (!b) return;
+        b.className = m === activeMode
+          ? 'py-2.5 px-2 rounded-2xl text-xs font-extrabold border btn-accent shadow-md transition'
+          : 'py-2.5 px-2 rounded-2xl text-xs font-extrabold border sub-glass text-sub hover:opacity-90 transition';
+      });
+    }
+
+    function startMatchGame() {
+      clearInterval(matchTimerInterval);
+      const pool = getCardsForFolder(activeFolderId, includeSubfolders), grid = document.getElementById('matchGrid');
+      if (pool.length < 2) { grid.innerHTML = `<div class="col-span-full text-center py-8 text-xs text-sub">Add at least 2 cards to play.</div>`; return; }
+      const sample = [...pool].sort(() => Math.random() - 0.5).slice(0, 6);
+      matchRemainingPairs = sample.length; matchSelectedTile = null;
+      const tiles = [];
+      sample.forEach(c => { tiles.push({ id: `t-${c.id}`, pairId: c.id, text: c.front, type: 'Word' }); tiles.push({ id: `d-${c.id}`, pairId: c.id, text: c.back, type: 'Meaning' }); });
+      tiles.sort(() => Math.random() - 0.5);
+      grid.innerHTML = tiles.map(t => `<button type="button" data-pair="${t.pairId}" onclick="handleMatchTileClick(this)" class="match-tile p-3 rounded-2xl sub-glass text-xs font-bold text-main flex flex-col justify-between text-left min-h-[5.5rem]"><span class="text-[10px] uppercase text-indigo-400 font-extrabold">${t.type}</span><span class="line-clamp-3 my-auto">${escapeHtml(t.text)}</span></button>`).join('');
+      matchStartTime = performance.now();
+      matchTimerInterval = setInterval(() => { document.getElementById('matchTimer').textContent = ((performance.now() - matchStartTime) / 1000).toFixed(1) + 's'; }, 100);
+    }
+    function handleMatchTileClick(el) {
+      if (el.classList.contains('matched')) return;
+      if (!matchSelectedTile) { matchSelectedTile = el; el.classList.add('ring-2', 'ring-indigo-500'); return; }
+      if (matchSelectedTile === el) { el.classList.remove('ring-2', 'ring-indigo-500'); matchSelectedTile = null; return; }
+      if (matchSelectedTile.dataset.pair === el.dataset.pair) {
+        matchSelectedTile.classList.add('matched'); el.classList.add('matched'); matchSelectedTile = null; matchRemainingPairs--;
+        if (matchRemainingPairs === 0) { clearInterval(matchTimerInterval); document.getElementById('matchGrid').innerHTML = `<div class="col-span-full text-center py-8 space-y-2"><div class="text-2xl">🎉</div><div class="font-extrabold text-main">Board Cleared!</div><button type="button" onclick="startMatchGame()" class="px-4 py-2 rounded-xl btn-accent text-xs font-extrabold">Play Again</button></div>`; }
+      } else { const prev = matchSelectedTile; matchSelectedTile = null; prev.classList.remove('ring-2', 'ring-indigo-500'); }
+    }
+
+    function exportBackupJson() {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' }));
+      a.download = `RecallPro_Backup.json`; a.click();
+    }
+    function importBackupJson(e) {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => { try { const imp = JSON.parse(ev.target.result); if (imp.folders && imp.cards) { appData = imp; activeFolderId = appData.folders[0]?.id; saveToStorage(); renderAll(); closeModal('backupModal'); alert('Restored!'); } } catch (err) { alert('Invalid file.'); } };
+      r.readAsText(f);
+    }
+    function resetToDefaultData() { if (confirm('Reset to sample data?')) { appData = JSON.parse(JSON.stringify(DEFAULT_DATA)); activeFolderId = appData.folders[0].id; saveToStorage(); renderAll(); closeModal('backupModal'); } }
+    function openModal(id) { if (id === 'aiModal') { document.getElementById('inputGeminiApiKey').value = localStorage.getItem(AI_KEY_STORAGE) || ''; document.getElementById('aiKeyTestStatus').classList.add('hidden'); } document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    document.getElementById('cardSearchInput').addEventListener('input', e => { searchQuery = e.target.value; currentCardIndex = 0; isHintVisible = false; renderAll(); });
+
+    let touchStartX = 0;
+    const touchArea = document.getElementById('flashcardTouchArea');
+    touchArea.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    touchArea.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 65) { if (diff < 0) nextCard(); else prevCard(); }
+    }, { passive: true });
+
+    applyTheme(currentTheme);
+    renderAll();
+    const rb = document.getElementById('appReadyBadge');
+    if (rb) { rb.textContent = '✓ v4.1 Active'; rb.className = 'ml-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold'; }
+  </script>
+</body>
+</html>
